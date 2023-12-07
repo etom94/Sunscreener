@@ -2,79 +2,132 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'vars.dart';
 
-class HourlyWeatherData {
-  final int time;
-  final int tempC;
-  final int tempF;
-  final String weatherDescDe;
-  final String weatherIconUrl;
+class HourlyData {
+  final String time;
+  final String tempC;
+  final String tempF;
+  final String weatherIconURL;
+  final String langDe;
 
-  HourlyWeatherData({
+  HourlyData({
     required this.time,
     required this.tempC,
     required this.tempF,
-    required this.weatherDescDe,
-    required this.weatherIconUrl,
+    required this.weatherIconURL,
+    required this.langDe,
   });
+}
 
-  factory HourlyWeatherData.fromJson(Map<String, dynamic> json) {
-    final hourlyData = json['hourly'] ?? [];
-    final weatherDescDe = hourlyData[0]['lang_de']?[0]['value'] ?? "";
-    final weatherIconUrl = hourlyData[0]['weatherIconUrl']?[0]['value'] ?? "";
+class CurrentConditionData {
+  final String tempC;
+  final String tempF;
+  final String weatherIconURL;
+  final String langDe;
 
-    return HourlyWeatherData(
-      time: int.parse(hourlyData[0]['time'] ?? "0"),
-      tempC: int.parse(hourlyData[0]['tempC'] ?? "0"),
-      tempF: int.parse(hourlyData[0]['tempF'] ?? "0"),
-      weatherDescDe: weatherDescDe,
-      weatherIconUrl: weatherIconUrl,
-    );
+  CurrentConditionData({
+    required this.tempC,
+    required this.tempF,
+    required this.weatherIconURL,
+    required this.langDe,
+  });
+}
+
+Future<List<HourlyData>> fetchHourlyWeatherData() async {
+  final location = getLocation();
+  final apiUrl = "$baseUrl?key=$apiKey&q=$location&tp=$intervall&format=json&lang=$language&extra=utcDateTime";
+
+  try {
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      List<HourlyData> hourlyDataList = [];
+      List<dynamic> hourlyList = data['data']['weather'][0]['hourly'];
+      for (var hourlyData in hourlyList) {
+        HourlyData dataPoint = HourlyData(
+          time: convertMinutesToTime(hourlyData['time']),
+          tempC: hourlyData['tempC'],
+          tempF: hourlyData['tempF'],
+          weatherIconURL: hourlyData['weatherIconUrl'][0]['value'],
+          langDe: hourlyData['lang_de'][0]['value'],
+        );
+        hourlyDataList.add(dataPoint);
+      }
+
+      return hourlyDataList;
+    } else {
+      print("Fehler bei der API-Anfrage. Statuscode: ${response.statusCode}");
+      throw Exception("Fehler bei der API-Anfrage. Statuscode: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Fehler: $e");
+    throw Exception("Fehler bei der Verarbeitung.");
   }
+}
+
+// Funktion zur Umwandlung von Minuten-String in Stunden und Minuten-String
+String convertMinutesToTime(String minutesString) {
+  int minutes = int.parse(minutesString);
+  int hours = (minutes ~/ 100); // Ganzzahldivision, um Stunden zu erhalten
+  int mins = minutes % 100; // Modulo, um Minuten zu erhalten
+
+  String formattedHours = hours.toString().padLeft(2, '0');
+  String formattedMinutes = mins.toString().padLeft(2, '0');
+
+  return "$formattedHours:$formattedMinutes";
+}
 
 
-  int get firstTime => time;
-  int get firstTempC => tempC;
-  String get firstWeatherDescDe => weatherDescDe;
+Future<List<CurrentConditionData>> fetchCurrentConditionData() async {
+  final location = getLocation();
+  final apiUrl = "$baseUrl?key=$apiKey&q=$location&tp=$intervall&format=json&lang=$language&extra=utcDateTime";
 
-  @override
-  String toString() {
-    return '''
-      Time: $time
-      Temperature: $tempC°C / $tempF°F
-      Weather Description (DE): $weatherDescDe
-      Weather Icon URL: $weatherIconUrl
-    ''';
+  try {
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      List<CurrentConditionData> currentConditionDataList = [];
+      List<dynamic> currentConditionList = data['data']['current_condition'];
+      for (var currentConditionData in currentConditionList) {
+        CurrentConditionData dataPoint = CurrentConditionData(
+          tempC: currentConditionData['temp_C'],
+          tempF: currentConditionData['temp_F'],
+          weatherIconURL: currentConditionData['weatherIconUrl'][0]['value'],
+          langDe: currentConditionData['lang_de'][0]['value'],
+        );
+        currentConditionDataList.add(dataPoint);
+      }
+
+      return currentConditionDataList;
+    } else {
+      print("Fehler bei der API-Anfrage. Statuscode: ${response.statusCode}");
+      throw Exception("Fehler bei der API-Anfrage. Statuscode: ${response.statusCode}");
+    }
+  } catch (e) {
+    print("Fehler: $e");
+    throw Exception("Fehler bei der Verarbeitung.");
   }
 }
 
 
-Future<List<HourlyWeatherData>> fetchHourlyWeatherData() async {
-  final location = getLocation();
-
+void main() async {
   try {
-    final urlHourly = Uri.parse("$baseUrl?key=$apiKey&q=$location&tp=$intervall&format=json&lang=$language");
-    final responseHourly = await http.get(urlHourly);
+    List<HourlyData> hourlyDataList = await fetchHourlyWeatherData();
+    List<CurrentConditionData> currentConditionDataList = await fetchCurrentConditionData();
 
-    if (responseHourly.statusCode == 200) {
-      final dataHourly = json.decode(responseHourly.body);
+    // Ausgabe der gespeicherten Werte für hourly
+    for (var dataPoint in hourlyDataList) {
+      print("Hourly - Time: ${dataPoint.time}, TempC: ${dataPoint.tempC}, TempF: ${dataPoint.tempF}, WeatherIconURL: ${dataPoint.weatherIconURL}, LangDe: ${dataPoint.langDe}");
+    }
 
-      if (dataHourly is Map) {
-        final List<dynamic> hourlyForecasts = dataHourly['data']['hourly'];
-        final List<HourlyWeatherData> hourlyWeatherDataList = hourlyForecasts.map((
-            hourlyData) => HourlyWeatherData.fromJson(hourlyData)).toList();
-
-        return hourlyWeatherDataList;
-      } else {
-        print("Fehler beim Dekodieren der JSON-Daten.");
-        throw Exception("Fehler beim Dekodieren der JSON-Daten.");
-      }
-    } else {
-      print("Fehler beim Abrufen der Daten. Statuscode: ${responseHourly.statusCode}");
-      throw Exception(
-          "Fehler beim Abrufen der Wetterdaten. Statuscode: ${responseHourly.statusCode}");
+    // Ausgabe der gespeicherten Werte für current_condition
+    for (var dataPoint in currentConditionDataList) {
+      print("Current Condition - TempC: ${dataPoint.tempC}, TempF: ${dataPoint.tempF}, WeatherIconURL: ${dataPoint.weatherIconURL}, LangDe: ${dataPoint.langDe}");
     }
   } catch (e) {
     print("Fehler: $e");
-    throw Exception("Fehler beim Abrufen der Wetterdaten.");
   }
 }

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sunscreenergui2/model/24HourData.dart';
 
-Future<List<HourlyWeatherData>> sevenDaysData = fetchHourlyWeatherData();
+Future<List<HourlyData>> sevenDaysData = fetchHourlyWeatherData();
 
 Widget buildHourlyWeatherWidget() {
-  return FutureBuilder<List<HourlyWeatherData>>(
+  return FutureBuilder<List<HourlyData>>(
     future: sevenDaysData,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -15,10 +15,10 @@ Widget buildHourlyWeatherWidget() {
       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
         return const Text("Keine Daten verfügbar");
       } else {
-        List<HourlyWeatherData> weatherDataList = snapshot.data!;
+        List<HourlyData> weatherDataList = snapshot.data!;
 
         // Ausgabe der Wetterdaten in der Konsole
-        for (HourlyWeatherData data in weatherDataList) {
+        for (HourlyData data in weatherDataList) {
           print(data.toString());
         }
 
@@ -56,7 +56,7 @@ Widget buildHourlyWeatherWidget() {
                           ),
                         ),
                         Image.network(
-                          hourlyWeatherData.weatherIconUrl,
+                          hourlyWeatherData.weatherIconURL,
                           height: 25,
                           width: 25,
                         ),

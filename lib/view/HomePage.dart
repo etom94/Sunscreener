@@ -15,22 +15,24 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool isWeatherWidgetSelected = true;
   String location = getLocation();
-  List<HourlyWeatherData> hourlyDataList = [];
+  List<CurrentConditionData> currentDataList = [];
+
   @override
   void initState() {
     super.initState();
     // Lade die stündlichen Wetterdaten asynchron
-    fetchHourlyWeatherData().then((data) {
+    fetchCurrentConditionData().then((data) {
       setState(() {
-        hourlyDataList = data;
+        currentDataList = data;
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     // Warte auf die Fertigstellung der Future, bevor auf die Liste zugegriffen wird
-    int firstTempC = hourlyDataList.isNotEmpty ? hourlyDataList.first.tempC : 0;
-    String firstWeatherDescDe = hourlyDataList.isNotEmpty ? hourlyDataList.first.weatherDescDe : "";
+    Object tempC = currentDataList.isNotEmpty ? currentDataList.first.tempC : 0;
+    String firstWeatherDescDe = currentDataList.isNotEmpty ? currentDataList.first.langDe : "";
 
     return Scaffold(
       appBar: AppBar(
@@ -90,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: Text(
-                        "$firstTempC°C", // Verwende die stündliche Temperatur
+                        "$tempC°C",
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -115,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         firstWeatherDescDe, // Verwende die stündliche Wetterbeschreibung
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 30,
+                          fontSize: 20,
                           shadows: [
                             Shadow(
                               color: Colors.black,
@@ -141,12 +143,14 @@ class _MyHomePageState extends State<MyHomePage> {
             // Zweiter Balken (40% Höhe)
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.33,
-              child: const Center(
-                child: Icon(
-                  Icons.wb_sunny,
-                  size: 200,
-                  color: Colors.yellow,
-                ),
+              child: Center(
+                child: currentDataList.isNotEmpty
+                    ? Image.network(
+                  currentDataList.first.weatherIconURL,
+                  height: 400,
+                  width: 400,
+                )
+                    : Container(), // Leerer Container, wenn currentDataList leer ist
               ),
             ),
             SizedBox(
