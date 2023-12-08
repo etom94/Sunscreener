@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sunscreenergui2/model/locationSettings.dart';
+import 'package:sunscreenergui2/view/HomePage.dart';
+import '../model/vars.dart';
+import '../model/locationSettings.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -78,6 +82,9 @@ class _MenuPageState extends State<MenuPage> {
                       onChanged: (value) {
                         setState(() {
                           locationEnabled = value;
+                          if(locationEnabled) {
+
+                          }
                         });
                       },
                     ),
@@ -118,16 +125,18 @@ class _MenuPageState extends State<MenuPage> {
                           filled: true,
                           fillColor: Colors.white,
                         ),
-                        onChanged: (value) {
-                          // Hier können Sie die Suche nach Städten implementieren
-                        },
-                        maxLines: 1,
-                        minLines: 1,
                       ),
                     ),
                   ],
                 ),
               ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String userInput = citySearchController.text;
+                Location.setuserLocation(userInput);
+              },
+              child: Text('Suchen'),
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,

@@ -21,7 +21,7 @@ class HourlyData {
 class CurrentConditionData {
   final String tempC;
   final String tempF;
-  final String weatherIconURL;
+  late final String weatherIconURL;
   final String langDe;
 
   CurrentConditionData({
@@ -33,7 +33,7 @@ class CurrentConditionData {
 }
 
 Future<List<HourlyData>> fetchHourlyWeatherData() async {
-  final location = getLocation();
+  final location = Location.getuserLocation();
   final apiUrl = "$baseUrl?key=$apiKey&q=$location&tp=$intervall&format=json&lang=$language&extra=utcDateTime";
 
   try {
@@ -80,7 +80,7 @@ String convertMinutesToTime(String minutesString) {
 
 
 Future<List<CurrentConditionData>> fetchCurrentConditionData() async {
-  final location = getLocation();
+  final location = Location.getuserLocation();
   final apiUrl = "$baseUrl?key=$apiKey&q=$location&tp=$intervall&format=json&lang=$language&extra=utcDateTime";
 
   try {

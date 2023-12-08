@@ -51,7 +51,7 @@ class WeatherData {
 
 
 Future<List<WeatherData>> fetchSevenDaysWeatherData() async {
-  final location = getLocation();
+  final location = Location.getuserLocation();
 
   try {
     final url7Days = Uri.parse(

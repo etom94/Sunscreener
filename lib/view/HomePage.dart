@@ -6,7 +6,7 @@ import 'StundenWetter.dart';
 import '../model/24HourData.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -14,13 +14,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isWeatherWidgetSelected = true;
-  String location = getLocation();
   List<CurrentConditionData> currentDataList = [];
+  Location location = Location();
 
   @override
   void initState() {
     super.initState();
     // Lade die stündlichen Wetterdaten asynchron
+    fetchData();
+
+    // Überwache Location-Änderungen und aktualisiere die Seite
+    location.locationChangeNotifier.addListener(() {
+      setState(() {
+        fetchData();
+      });
+    });
+  }
+
+  // Funktion zum Abrufen der Daten
+  void fetchData() {
     fetchCurrentConditionData().then((data) {
       setState(() {
         currentDataList = data;
@@ -62,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            location = getLocation(),
+            Location.getuserLocation(),
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -114,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: Text(
-                        firstWeatherDescDe, // Verwende die stündliche Wetterbeschreibung
+                        firstWeatherDescDe,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -133,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Container(
                     alignment: Alignment.center,
                     child: Container(
-                      width: double.infinity, // Nimmt den verbleibenden Platz ein
+                      width: double.infinity,
                     ),
                   ),
                 ],
@@ -150,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 400,
                   width: 400,
                 )
-                    : Container(), // Leerer Container, wenn currentDataList leer ist
+                    : Container(),
               ),
             ),
             SizedBox(
