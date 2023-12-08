@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sunscreenergui2/model/locationSettings.dart';
-import 'package:sunscreenergui2/view/HomePage.dart';
 import '../model/vars.dart';
-import '../model/locationSettings.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -15,6 +13,7 @@ class _MenuPageState extends State<MenuPage> {
   bool locationEnabled = false;
   double horizontalPadding = 15.0;
   TextEditingController citySearchController = TextEditingController();
+  Location location = Location();
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +81,8 @@ class _MenuPageState extends State<MenuPage> {
                       onChanged: (value) {
                         setState(() {
                           locationEnabled = value;
-                          if(locationEnabled) {
-
+                          if (locationEnabled) {
+                            // Additional logic when locationEnabled is true
                           }
                         });
                       },
@@ -118,6 +117,12 @@ class _MenuPageState extends State<MenuPage> {
                       width: MediaQuery.of(context).size.width * 0.5,
                       child: TextField(
                         controller: citySearchController,
+                        onSubmitted: (String userInput) {
+                          // Hier wird die Aktion für die Eingabetaste (Enter) ausgeführt
+                          // Sie können hier die Logik für die Rücktaste hinzufügen
+                          Location.setuserLocation(userInput);
+                          Navigator.pop(context);
+                          },
                         decoration: const InputDecoration(
                           contentPadding: EdgeInsets.symmetric(vertical: 8),
                           hintText: 'Suchen Sie nach Städten',
@@ -131,44 +136,10 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                String userInput = citySearchController.text;
-                Location.setuserLocation(userInput);
-              },
-              child: Text('Suchen'),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Favoriten',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black,
-                            offset: Offset(1, 1),
-                            blurRadius: 0,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
-                  // Hier fügen Sie den Inhalt des Containers ein
-                  // Sie können beliebige Widgets und Inhalte hier platzieren
+                  // Here you can add any widgets or content you want
                 ),
               ),
             ),

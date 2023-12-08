@@ -10,7 +10,7 @@ const int intervall = 1;
 
 class Location extends ChangeNotifier {
   // Defaultwert setzen, falls der Benutzer noch keinen Ort eingegeben hat
-  static String userLocation = "basel";
+  static String userLocation = "Basel";
 
   // ChangeNotifier-Instanz erstellen
   static final Location _instance = Location._();

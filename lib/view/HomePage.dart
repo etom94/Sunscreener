@@ -6,7 +6,7 @@ import 'StundenWetter.dart';
 import '../model/24HourData.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
