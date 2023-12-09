@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../model/locationSettings.dart';
 import '../model/vars.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../model/SearchHelp.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -82,7 +83,7 @@ class _MenuPageState extends State<MenuPage> {
                         setState(() {
                           locationEnabled = value;
                           if (locationEnabled) {
-                            // Additional logic when locationEnabled is true
+                            GPS.checkAndSetLocation();
                           }
                         });
                       },
@@ -91,55 +92,16 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Stadt suchen',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black,
-                            offset: Offset(1, 1),
-                            blurRadius: 0,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.5,
-                      child: TextField(
-                        controller: citySearchController,
-                        onSubmitted: (String userInput) {
-                          // Hier wird die Aktion für die Eingabetaste (Enter) ausgeführt
-                          // Sie können hier die Logik für die Rücktaste hinzufügen
-                          Location.setuserLocation(userInput);
-                          Navigator.pop(context);
-                          },
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 8),
-                          hintText: 'Suchen Sie nach Städten',
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+            // Wrap WeatherSearch with Expanded
+            Expanded(
+              child: WeatherSearch(),
             ),
+
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
-                  // Here you can add any widgets or content you want
+                  // Hier kannst du beliebige Widgets oder Inhalte hinzufügen
                 ),
               ),
             ),
