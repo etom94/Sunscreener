@@ -28,8 +28,11 @@ class _WeatherSearchState extends State<WeatherSearch> {
     );
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> data = json.decode(response.body);
-      List<dynamic> result = data['search_api']['result'];
+      final data = utf8.decode(response.bodyBytes);
+
+      Map<String, dynamic> decodedData = json.decode(data);
+
+      List<dynamic> result = decodedData['search_api']['result'];
 
       List<Map<String, String>> suggestions = [];
       for (var location in result) {

@@ -35,5 +35,17 @@ class Location extends ChangeNotifier {
   }
 }
 
+// app_settings.dart
+class locationSettings {
+  static bool _locationEnabled = false;
+
+  static bool getlocationEnabled() => _locationEnabled;
+
+  static setlocationEnabled(bool value) {
+    _locationEnabled = value;
+  }
+}
+
+
 
 //☁️🌧️🌦️⛅☀️🌧️❄️🌩️

@@ -11,7 +11,7 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  bool locationEnabled = false;
+  bool locationEnabled = locationSettings.getlocationEnabled();
   double horizontalPadding = 15.0;
   TextEditingController citySearchController = TextEditingController();
   Location location = Location();
@@ -82,6 +82,7 @@ class _MenuPageState extends State<MenuPage> {
                       onChanged: (value) {
                         setState(() {
                           locationEnabled = value;
+                          locationSettings.setlocationEnabled(value);
                           if (locationEnabled) {
                             GPS.checkAndSetLocation();
                           }

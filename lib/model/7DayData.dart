@@ -10,6 +10,7 @@ class WeatherData {
   final int maxTempF;
   final int minTempC;
   final int minTempF;
+  final String weatherCode; // Neu hinzugefügtes Feld
 
   WeatherData({
     required this.date,
@@ -19,7 +20,9 @@ class WeatherData {
     required this.maxTempF,
     required this.minTempC,
     required this.minTempF,
+    required this.weatherCode,
   });
+
 
   factory WeatherData.fromJson(Map<String, dynamic> json) {
     final hourly = json['hourly'] ?? [];
@@ -34,6 +37,8 @@ class WeatherData {
       maxTempF: int.parse(json['maxtempF'] ?? "0"),
       minTempC: int.parse(json['mintempC'] ?? "0"),
       minTempF: int.parse(json['mintempF'] ?? "0"),
+      // Füge das weatherCode-Feld hinzu, wenn es in den API-Daten vorhanden ist
+      weatherCode: json['weatherCode'] ?? "",
     );
   }
 
@@ -49,7 +54,6 @@ class WeatherData {
   }
 }
 
-
 Future<List<WeatherData>> fetchSevenDaysWeatherData() async {
   final location = Location.getuserLocation();
 
@@ -59,10 +63,12 @@ Future<List<WeatherData>> fetchSevenDaysWeatherData() async {
     final response7Days = await http.get(url7Days);
 
     if (response7Days.statusCode == 200) {
-      final data7Days = json.decode(response7Days.body);
+      final data7Days = utf8.decode(response7Days.bodyBytes);
 
-      if (data7Days is Map) {
-        final List<dynamic> dailyForecasts = data7Days['data']['weather'];
+      final dynamic decodedData = json.decode(data7Days);
+
+      if (decodedData is Map) {
+        final List<dynamic> dailyForecasts = decodedData['data']['weather'];
         final List<WeatherData> weatherDataList = dailyForecasts.map((
             dailyData) => WeatherData.fromJson(dailyData)).toList();
 
@@ -83,5 +89,3 @@ Future<List<WeatherData>> fetchSevenDaysWeatherData() async {
     throw Exception("Fehler beim Abrufen der Wetterdaten.");
   }
 }
-
-

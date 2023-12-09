@@ -8,6 +8,7 @@ class HourlyData {
   final String tempF;
   final String weatherIconURL;
   final String langDe;
+  final String weatherCode; // Neues Feld für weatherCode
 
   HourlyData({
     required this.time,
@@ -15,6 +16,7 @@ class HourlyData {
     required this.tempF,
     required this.weatherIconURL,
     required this.langDe,
+    required this.weatherCode,
   });
 }
 
@@ -23,12 +25,14 @@ class CurrentConditionData {
   final String tempF;
   late final String weatherIconURL;
   final String langDe;
+  final String weatherCode; // Neues Feld für weatherCode
 
   CurrentConditionData({
     required this.tempC,
     required this.tempF,
     required this.weatherIconURL,
     required this.langDe,
+    required this.weatherCode,
   });
 }
 
@@ -40,10 +44,12 @@ Future<List<HourlyData>> fetchHourlyWeatherData() async {
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      final data = utf8.decode(response.bodyBytes);
+
+      Map<String, dynamic> decodedData = json.decode(data);
 
       List<HourlyData> hourlyDataList = [];
-      List<dynamic> hourlyList = data['data']['weather'][0]['hourly'];
+      List<dynamic> hourlyList = decodedData['data']['weather'][0]['hourly'];
       for (var hourlyData in hourlyList) {
         HourlyData dataPoint = HourlyData(
           time: convertMinutesToTime(hourlyData['time']),
@@ -51,6 +57,7 @@ Future<List<HourlyData>> fetchHourlyWeatherData() async {
           tempF: hourlyData['tempF'],
           weatherIconURL: hourlyData['weatherIconUrl'][0]['value'],
           langDe: hourlyData['lang_de'][0]['value'],
+          weatherCode: hourlyData['weatherCode'], // Hier den Wert für weatherCode hinzufügen
         );
         hourlyDataList.add(dataPoint);
       }
@@ -78,7 +85,6 @@ String convertMinutesToTime(String minutesString) {
   return "$formattedHours:$formattedMinutes";
 }
 
-
 Future<List<CurrentConditionData>> fetchCurrentConditionData() async {
   final location = Location.getuserLocation();
   final apiUrl = "$baseUrl?key=$apiKey&q=$location&tp=$intervall&format=json&lang=$language&extra=utcDateTime";
@@ -87,16 +93,19 @@ Future<List<CurrentConditionData>> fetchCurrentConditionData() async {
     final response = await http.get(Uri.parse(apiUrl));
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
+      final data = utf8.decode(response.bodyBytes);
+
+      Map<String, dynamic> decodedData = json.decode(data);
 
       List<CurrentConditionData> currentConditionDataList = [];
-      List<dynamic> currentConditionList = data['data']['current_condition'];
+      List<dynamic> currentConditionList = decodedData['data']['current_condition'];
       for (var currentConditionData in currentConditionList) {
         CurrentConditionData dataPoint = CurrentConditionData(
           tempC: currentConditionData['temp_C'],
           tempF: currentConditionData['temp_F'],
           weatherIconURL: currentConditionData['weatherIconUrl'][0]['value'],
           langDe: currentConditionData['lang_de'][0]['value'],
+          weatherCode: currentConditionData['weatherCode'], // Hier den Wert für weatherCode hinzufügen
         );
         currentConditionDataList.add(dataPoint);
       }
@@ -111,7 +120,6 @@ Future<List<CurrentConditionData>> fetchCurrentConditionData() async {
     throw Exception("Fehler bei der Verarbeitung.");
   }
 }
-
 
 void main() async {
   try {
