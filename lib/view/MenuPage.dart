@@ -93,16 +93,12 @@ class _MenuPageState extends State<MenuPage> {
                 ),
               ),
             ),
-
-            // Wrap WeatherSearch with Expanded
             Expanded(
               child: WeatherSearch(),
             ),
-
             Expanded(
               child: SingleChildScrollView(
                 child: Container(
-                  // Hier kannst du beliebige Widgets oder Inhalte hinzufügen
                 ),
               ),
             ),

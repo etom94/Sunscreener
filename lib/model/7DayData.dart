@@ -10,7 +10,7 @@ class WeatherData {
   final int maxTempF;
   final int minTempC;
   final int minTempF;
-  final String weatherCode; // Neu hinzugefügtes Feld
+  final String weatherCode;
 
   WeatherData({
     required this.date,
@@ -37,7 +37,6 @@ class WeatherData {
       maxTempF: int.parse(json['maxtempF'] ?? "0"),
       minTempC: int.parse(json['mintempC'] ?? "0"),
       minTempF: int.parse(json['mintempF'] ?? "0"),
-      // Füge das weatherCode-Feld hinzu, wenn es in den API-Daten vorhanden ist
       weatherCode: json['weatherCode'] ?? "",
     );
   }

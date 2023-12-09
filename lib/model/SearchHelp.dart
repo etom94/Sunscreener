@@ -13,10 +13,10 @@ class _WeatherSearchState extends State<WeatherSearch> {
   List<Map<String, String>> searchSuggestions = [];
 
   void onSubmitted(String userInput) {
-    // Hier kannst du die Aktionen ausführen, die du im onSubmitted-Event machen möchtest
+
     Location.setuserLocation(userInput);
     Navigator.pop(context);
-    // Weitere Aktionen...
+
   }
 
   void searchLocation(String userInput) async {
@@ -84,7 +84,7 @@ class _WeatherSearchState extends State<WeatherSearch> {
                       searchLocation(userInput);
                     },
                     onSubmitted: (String userInput) {
-                      // Perform the final search based on the selected suggestion or user input
+
                       searchLocation(userInput);
                       Location.setuserLocation(userInput);
                     },
@@ -101,7 +101,7 @@ class _WeatherSearchState extends State<WeatherSearch> {
             ),
           ),
         ),
-        // Display real-time search suggestions directly beneath the text field
+
         if (searchSuggestions.isNotEmpty)
           Container(
             decoration: BoxDecoration(
@@ -112,7 +112,7 @@ class _WeatherSearchState extends State<WeatherSearch> {
                 bottomRight: Radius.circular(8.0),
               ),
             ),
-            // Remove the width constraint to take the full width of the screen
+
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -122,15 +122,15 @@ class _WeatherSearchState extends State<WeatherSearch> {
                       ListTile(
                         title: Text('${searchSuggestions[index]['areaName']}, ${searchSuggestions[index]['region']}, ${searchSuggestions[index]['country']}'),
                         onTap: () {
-                          // Set the selected suggestion in the text field
+
                           citySearchController.text = searchSuggestions[index]['areaName'] ?? '';
-                          // Perform the final search based on the selected suggestion
+
                           searchLocation(searchSuggestions[index]['areaName'] ?? '');
-                          // Clear the suggestions list
+
                           setState(() {
                             searchSuggestions.clear();
                           });
-                          // Trigger onSubmitted event
+
                           onSubmitted(citySearchController.text);
                         },
                       ),

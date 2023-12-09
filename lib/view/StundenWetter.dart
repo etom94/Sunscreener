@@ -5,7 +5,7 @@ Future<List<HourlyData>> sevenDaysData = fetchHourlyWeatherData();
 
 Widget buildHourlyWeatherWidget() {
   return FutureBuilder<List<HourlyData>>(
-    future: fetchHourlyWeatherData(), // Änderung: Direkter Aufruf der Fetch-Funktion
+    future: fetchHourlyWeatherData(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return const CircularProgressIndicator();
@@ -17,7 +17,6 @@ Widget buildHourlyWeatherWidget() {
       } else {
         List<HourlyData> weatherDataList = snapshot.data!;
 
-        // Ausgabe der Wetterdaten in der Konsole
         for (HourlyData data in weatherDataList) {
           print(data.toString());
         }

@@ -8,7 +8,7 @@ class HourlyData {
   final String tempF;
   final String weatherIconURL;
   final String langDe;
-  final String weatherCode; // Neues Feld für weatherCode
+  final String weatherCode;
 
   HourlyData({
     required this.time,
@@ -25,7 +25,7 @@ class CurrentConditionData {
   final String tempF;
   late final String weatherIconURL;
   final String langDe;
-  final String weatherCode; // Neues Feld für weatherCode
+  final String weatherCode;
 
   CurrentConditionData({
     required this.tempC,
@@ -57,7 +57,7 @@ Future<List<HourlyData>> fetchHourlyWeatherData() async {
           tempF: hourlyData['tempF'],
           weatherIconURL: hourlyData['weatherIconUrl'][0]['value'],
           langDe: hourlyData['lang_de'][0]['value'],
-          weatherCode: hourlyData['weatherCode'], // Hier den Wert für weatherCode hinzufügen
+          weatherCode: hourlyData['weatherCode'],
         );
         hourlyDataList.add(dataPoint);
       }
@@ -73,11 +73,11 @@ Future<List<HourlyData>> fetchHourlyWeatherData() async {
   }
 }
 
-// Funktion zur Umwandlung von Minuten-String in Stunden und Minuten-String
+
 String convertMinutesToTime(String minutesString) {
   int minutes = int.parse(minutesString);
-  int hours = (minutes ~/ 100); // Ganzzahldivision, um Stunden zu erhalten
-  int mins = minutes % 100; // Modulo, um Minuten zu erhalten
+  int hours = (minutes ~/ 100);
+  int mins = minutes % 100;
 
   String formattedHours = hours.toString().padLeft(2, '0');
   String formattedMinutes = mins.toString().padLeft(2, '0');
@@ -105,7 +105,7 @@ Future<List<CurrentConditionData>> fetchCurrentConditionData() async {
           tempF: currentConditionData['temp_F'],
           weatherIconURL: currentConditionData['weatherIconUrl'][0]['value'],
           langDe: currentConditionData['lang_de'][0]['value'],
-          weatherCode: currentConditionData['weatherCode'], // Hier den Wert für weatherCode hinzufügen
+          weatherCode: currentConditionData['weatherCode'],
         );
         currentConditionDataList.add(dataPoint);
       }
@@ -126,12 +126,12 @@ void main() async {
     List<HourlyData> hourlyDataList = await fetchHourlyWeatherData();
     List<CurrentConditionData> currentConditionDataList = await fetchCurrentConditionData();
 
-    // Ausgabe der gespeicherten Werte für hourly
+
     for (var dataPoint in hourlyDataList) {
       print("Hourly - Time: ${dataPoint.time}, TempC: ${dataPoint.tempC}, TempF: ${dataPoint.tempF}, WeatherIconURL: ${dataPoint.weatherIconURL}, LangDe: ${dataPoint.langDe}");
     }
 
-    // Ausgabe der gespeicherten Werte für current_condition
+
     for (var dataPoint in currentConditionDataList) {
       print("Current Condition - TempC: ${dataPoint.tempC}, TempF: ${dataPoint.tempF}, WeatherIconURL: ${dataPoint.weatherIconURL}, LangDe: ${dataPoint.langDe}");
     }
