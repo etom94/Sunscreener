@@ -9,26 +9,33 @@ const int intervall = 1;
 
 
 class Location extends ChangeNotifier {
+  // Defaultwert setzen, falls der Benutzer noch keinen Ort eingegeben hat
   static String userLocation = "Basel";
 
+  // ChangeNotifier-Instanz erstellen
   static final Location _instance = Location._();
   factory Location() => _instance;
 
+  // Location-Change-Notifier
   final ChangeNotifier _locationChangeNotifier = ChangeNotifier();
   ChangeNotifier get locationChangeNotifier => _locationChangeNotifier;
 
   Location._();
 
+  // Getter für userLocation
   static String getuserLocation() {
     return userLocation;
   }
 
+  // Setter für userLocation
   static void setuserLocation(String newLocation) {
     userLocation = newLocation;
+    // Benachrichtigen Sie Listener über die Änderung
     _instance._locationChangeNotifier.notifyListeners();
   }
 }
 
+// app_settings.dart
 class locationSettings {
   static bool _locationEnabled = false;
 
@@ -38,3 +45,7 @@ class locationSettings {
     _locationEnabled = value;
   }
 }
+
+
+
+//☁️🌧️🌦️⛅☀️🌧️❄️🌩️

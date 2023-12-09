@@ -20,10 +20,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-
+    // Lade die stündlichen Wetterdaten asynchron
     fetchData();
 
-
+    // Überwache Location-Änderungen und aktualisiere die Seite
     location.locationChangeNotifier.addListener(() {
       setState(() {
         fetchData();
@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-
+  // Funktion zum Abrufen der Daten
   void fetchData() {
     fetchCurrentConditionData().then((data) {
       setState(() {
@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
+    // Warte auf die Fertigstellung der Future, bevor auf die Liste zugegriffen wird
     Object tempC = currentDataList.isNotEmpty ? currentDataList.first.tempC : 0;
     String firstWeatherDescDe = currentDataList.isNotEmpty ? currentDataList.first.langDe : "";
 
@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.lightBlueAccent,
         iconTheme: const IconThemeData(
-          color: Colors.white,
+          color: Colors.white, // Weiße Schriftfarbe für das Menüsymbol
           size: 40.0,
           shadows: [
             Shadow(
@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16.0),
+            padding: const EdgeInsets.only(right: 16.0), // Hier können Sie den gewünschten Abstand einstellen
             child: IconButton(
               icon: const Icon(Icons.menu),
               onPressed: () {
@@ -98,6 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: GridView.count(
                 crossAxisCount: 3,
                 children: [
+                  // Erste Spalte
                   Container(
                     alignment: Alignment.topRight,
                     child: Padding(
@@ -119,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
+                  // Zweite Spalte
                   Container(
                     alignment: Alignment.topCenter,
                     child: Padding(
@@ -139,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
+                  // Dritte Spalte
                   Container(
                     alignment: Alignment.center,
                     child: Container(
@@ -148,6 +151,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+
+            // Zweiter Balken (40% Höhe)
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.33,
               child: Center(
@@ -182,6 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
               height: MediaQuery.of(context).size.height * 0.4,
               child: Stack(
                 children: [
+                  // Zentriertes Widget (Weather oder Hourly Weather)
                   Center(
                     child: isWeatherWidgetSelected
                         ? buildWeatherWidget()

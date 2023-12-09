@@ -17,21 +17,24 @@ class GPS {
 
   static Future<void> checkAndSetLocation() async {
     try {
-
+      // Überprüfen Sie die Standortberechtigungen
       var status = await Permission.location.status;
       if (status == PermissionStatus.denied) {
-
+        // Berechtigungen anfordern
         await Permission.location.request();
       }
 
+      // Überprüfen Sie, ob der Standortdienst aktiviert ist
       bool isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
       if (status == PermissionStatus.granted) {
         if (!isLocationServiceEnabled) {
+          // Standortdienst ist deaktiviert, aktivieren Sie ihn
           await Geolocator.openLocationSettings();
           return;
         }
 
+        // Get location
         Position position;
         try {
           position = await Future.delayed(
@@ -48,6 +51,7 @@ class GPS {
         double latitude = position.latitude;
         double longitude = position.longitude;
 
+        // Call the weather API to get areaName
         await getAreaName(latitude, longitude);
       } else {
         print('Location permission denied. Location not set.');
@@ -56,6 +60,7 @@ class GPS {
       print('Error obtaining location: $e');
     }
   }
+
   static Future<void> getAreaName(double latitude, double longitude) async {
     try {
       String formattetLocation = '$latitude,$longitude';
@@ -67,13 +72,16 @@ class GPS {
       if (response.statusCode == 200) {
         String responseBody = response.body;
 
+        // Entferne unerwünschte Zeichen am Anfang und Ende der JSON-Antwort
         if (responseBody.startsWith('no(') && responseBody.endsWith(')')) {
           responseBody = responseBody.substring(3, responseBody.length - 1);
         }
+
         Map<String, dynamic> data = json.decode(responseBody);
         String areaName =
         data['data']['nearest_area'][0]['areaName'][0]['value'];
 
+        // Set location using areaName
         print('Areaname:::::::::::' + areaName);
         Location.setuserLocation(areaName);
         print('AreaName set to: $areaName');
